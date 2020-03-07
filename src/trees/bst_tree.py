@@ -91,9 +91,15 @@ class BST(Generic[T, K]):
 
     def get_max_node(self) -> BSTNode[T]:
         if self.root is None:
-            raise MissingValueError()
+            raise EmptyTreeError
         else:
-            return self.root.get_max_node()       
+            return self.get_max_node_recurse(self.root)
+
+    def get_max_node_recurse(self, node: BSTNode[T]) -> BSTNode[T]:
+        if node.right is None:
+            return node
+        else:
+            return self.get_max_node_recurse(node.right)
         """
         Return the node with the largest value in the BST
         :return:
@@ -106,7 +112,7 @@ class BST(Generic[T, K]):
         :return:
         """
         if self.root is None:
-            raise MissingValueError()
+            raise EmptyTreeError
         else:
             return self.get_min_node_recurse(self.root)
 
