@@ -101,14 +101,21 @@ class BST(Generic[T, K]):
         """
 
     def get_min_node(self) -> BSTNode[T]:
-        if self.root is None:
-            raise MissingValueError()
-        else:
-            return self.root.get_min_node()
         """
         Return the node with the smallest value in the BST
         :return:
         """
+        if self.root is None:
+            raise MissingValueError()
+        else:
+            return self.get_min_node_recurse(self.root)
+
+    def get_min_node_recurse(self, node: BSTNode[T]) -> BSTNode[T]:
+        if node.left is None:
+            return node
+        else:
+            return self.get_min_node_recurse(node.left)
+
 
 #    def remove_value(self, value: T) -> None:
 #        node_to_remove = bst_get(value, root)

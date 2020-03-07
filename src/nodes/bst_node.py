@@ -47,28 +47,10 @@ class BSTNode(Generic[T]):
 
     def length(self) -> int:
         if self.left and self.right:
-            print ("both")
             return 1 + self.left.length() +  self.right.length()
         elif self.left:
-            print ("left")
             return 1 + self.left.length()
         elif self.right:
-            print ("right")
-            print ("node", self.data)
             return 1 + self.right.length()
         else:
             return 1
-
-    def get_max_node(self) -> Generic[T]:
-        if self.right is None:
-            return self
-        else:
-            self.get_max_node(self.right)
-
-
-    def get_min_node(self) -> Generic[T]:
-        if self.left is None:
-            return self
-        else:
-            self.get_min_node(self.left)
-
