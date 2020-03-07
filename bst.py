@@ -19,7 +19,8 @@ if __name__ == '__main__':
     print ("Node d:", d.data, d.right )
     print ("Tree height:", tree.height())
     print ("Tree length:", len(tree))
-    node = tree.get_max_node()
-    print ("Tree max:", node.data)
-    
+    node_max = tree.get_max_node()
+    print ("Tree max:", node_max.data)
+    node_min = tree.get_min_node()
+    print ("Tree min:", node_min.data) 
 
