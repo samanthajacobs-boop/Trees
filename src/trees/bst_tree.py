@@ -101,12 +101,10 @@ class BST(Generic[T, K]):
         """
 
     def get_min_node(self) -> BSTNode[T]:
-        if root is None:
+        if self.root is None:
             raise MissingValueError()
-        elif root.left is None:
-            return root
         else:
-            get_min_node(self.root.left)
+            return self.root.get_min_node()
         """
         Return the node with the smallest value in the BST
         :return:

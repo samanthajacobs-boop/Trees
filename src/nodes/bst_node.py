@@ -63,7 +63,12 @@ class BSTNode(Generic[T]):
         if self.right is None:
             return self
         else:
-            get_max_node(self.right)
+            self.get_max_node(self.right)
 
 
+    def get_min_node(self) -> Generic[T]:
+        if self.left is None:
+            return self
+        else:
+            self.get_min_node(self.left)
 
