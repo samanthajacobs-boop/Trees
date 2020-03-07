@@ -59,4 +59,11 @@ class BSTNode(Generic[T]):
         else:
             return 1
 
+   def get_max_node(self) -> BSTNode[T]:
+        if self.right is None:
+            return self
+        else:
+            get_max_node(self.right)
+
+
 

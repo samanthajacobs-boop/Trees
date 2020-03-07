@@ -90,13 +90,10 @@ class BST(Generic[T, K]):
         
 
     def get_max_node(self) -> BSTNode[T]:
-        if root is None:
+        if self.root is None:
             raise MissingValueError()
-        elif root.right is None:
-            return root
         else:
-            get_max_node(self.root.right)
-        
+            return self.root.get_max_node()       
         """
         Return the node with the largest value in the BST
         :return:
