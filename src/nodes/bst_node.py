@@ -14,7 +14,7 @@ class BSTNode(Generic[T]):
                  parent: Optional["BSTNode[T]"] = None) -> None:
         self.left = None
         self.right = None
-        self.data = value
+        self.value = value
         """
         :param value: The value to store in the node
         :param children: optional children

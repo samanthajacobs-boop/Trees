@@ -26,10 +26,6 @@ class BST(Generic[T, K]):
         functions
         """
         self.root = root
-#        self.data = data
-#        self.root.right = root.right
-#        self.root.left = root.left
-#        ...
 
     #@property
     def height(self) -> int:
@@ -68,10 +64,10 @@ class BST(Generic[T, K]):
             return
 
     def insert_recurse(self, value: T, node: BSTNode[T]) -> BSTNode[T]:
-        #if node.data == value:
+        #if node.value == value:
         #    return   # come back and allow dups
-        #elif node.data > value:
-        if node.data >= value:
+        #elif node.value > value:
+        if node.value >= value:
             if node.left:
                 return self.insert_recurse(value,node.left)
             else:
@@ -100,12 +96,12 @@ class BST(Generic[T, K]):
 
     def get_node_recurse(self, value: K,node: BSTNode[T]) -> BSTNode[T]:    
         try:
-            value == node.data
+            value == node.value
         except:
             raise MissingValueError()
-        if value == node.data:
+        if value == node.value:
             return node
-        elif value < node.data:
+        elif value < node.value:
             return self.get_node_recurse(value, node.left)
         else:
             return self.get_node_recurse(value, node.right)
