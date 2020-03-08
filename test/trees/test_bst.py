@@ -45,5 +45,68 @@ class TestBST(unittest.TestCase):
         cmp_tree._num_nodes = 5
         self.assertNotEqual(tree, cmp_tree)
 
+    def max_test(self):
+        tree = BST()
+        tree.add_value(100)
+        self.assertEqual(tree.get_max_node(), 100)
+        tree.add_value(80)
+        self.assertEqual(tree.get_max_node(), 100)
+        tree.add_value(200)
+    def test_create_tree(self):
+        tree = BST()
+        tree.add_value(100)
+        tree.add_value(80)
+        tree.add_value(200)
+        tree.add_value(90)
+        tree.add_value(70)
+
+        root = BSTNode(100)
+        root.left = BSTNode(80)
+        root.right = BSTNode(200)
+        root.left.left = BSTNode(70)
+        root.left.right = BSTNode(90)
+
+        cmp_tree = BST(root)
+        self.assertEqual(tree, cmp_tree)
+
+        self.assertEqual(tree.get_max_node(), 200)
+        tree.add_value(90)
+        tree.add_value(70)
+        self.assertEqual(tree.get_max_node(), 200)
+    
+    def max_empty(self):
+        tree = BST()
+        self.assertEqual(tree.get_max_node(), None)
+
+
+    def min_test(self):
+        tree = BST()
+        tree.add_value(100)
+        self.assertEqual(tree.get_min_node(), 100)
+        tree.add_value(80)
+        self.assertEqual(tree.get_min_node(), 80)
+        tree.add_value(200)
+        self.assertEqual(tree.get_min_node(), 80)
+        tree.add_value(60)
+        self.assertEqual(tree.get_min_node(), 60)
+        tree.add_value(90)
+        self.assertEqual(tree.get_min_node(), 60)
+
+    def min_empty(self):
+        tree = BST()
+        self.assertEqual(tree.get_min_node(), None)
+
+#    def length_test(self):
+
+#    def length_test_empty(self):
+
+#    def height_test(self):
+    
+#    def height_test_empty(self):
+
+#    def get_node(self):
+
+#    def get_node_empty(self):
+
 if __name__ == '__main__':
     unittest.main()
