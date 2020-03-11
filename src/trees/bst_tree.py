@@ -1,4 +1,4 @@
-from typing import Optional, Callable, TypeVar, Generic
+from typing import Optional, Callable, TypeVar, Generic, List
 
 
 #from bstnode import BSTNode
@@ -26,29 +26,62 @@ class BST(Generic[T, K]):
         functions
         """
         self.root = root
+        self.key = key
+        self.bst_length = self.len_via_tree(root)
 
     #@property
     def height(self) -> int:
         if self.root:
-            return self.root.height()
+            return self.height_recurse(self.root) -1
         else:
             return -1
         """
         Compute the height of the tree. If the tree is empty its height is -1
         :return:
         """
+    def height_recurse(self, node: BSTNode[T]) -> int:
+        if node.left and node.right:
+            return 1 + max(self.height_recurse(node.left), self.height_recurse(node.right))
+        elif node.left:
+            return 1 + self.height_recurse(node.left)
+        elif node.right:
+            return 1 + self.height_recurse(node.right)
+        else:
+            return 1
         
-
     def __len__(self) -> int:
         """
         :return: the number of nodes in the tree
         """
-        if self.root is None:
+        return self.bst_length
+
+#    def __len__(self) -> int:
+#        """
+#        :return: the number of nodes in the tree
+#        """
+#        if self.root is None:
+#            return 0
+#        else:
+#            return self.length(self.root)
+
+    def len_via_tree(self,root: BSTNode[T]) -> int:
+        """
+        :return: the number of nodes in the tree
+        """
+        if root is None:
             return 0
         else:
-            return self.root.length()
-        
-        #def bst_insert(value: T, root: Node[T])-> Node[T]:
+            return self.length(root)
+
+    def length(self, node: BSTNode[T]) -> int:
+        if node.left and node.right:
+            return 1 + self.length(node.left) +  self.length(node.right)
+        elif node.left:
+            return 1 + self.length(node.left)
+        elif node.right:
+            return 1 + self.length(node.right)
+        else:
+            return 1
         
 
     def add_value(self, value: T) -> None:
@@ -57,26 +90,27 @@ class BST(Generic[T, K]):
         :param value:
         :return:
         """
+        self.bst_length += 1
         if self.root:
-            return self.insert_recurse(value, self.root)
+            return self.insert_recurse(value, self.root,self.key)
         else:
             self.root = BSTNode(value)
             return
 
-    def insert_recurse(self, value: T, node: BSTNode[T]) -> BSTNode[T]:
+    def insert_recurse(self, value: T, node: BSTNode[T], key: Callable[[T], K]) -> BSTNode[T]:
         #if node.value == value:
         #    return   # come back and allow dups
         #elif node.value > value:
-        if node.value >= value:
+        if key(node.value) > key(value):
             if node.left:
-                return self.insert_recurse(value,node.left)
+                return self.insert_recurse(value,node.left,key)
             else:
                 node.left = BSTNode(value)
                 return
 
         else:
             if node.right:
-                return self.insert_recurse(value,node.right)
+                return self.insert_recurse(value,node.right,key)
             else:
                 node.right = BSTNode(value)
                 return
@@ -91,20 +125,20 @@ class BST(Generic[T, K]):
         if self.root is None:
             raise EmptyTreeError()
         else:
-            return self.get_node_recurse(value, self.root)
+            return self.get_node_recurse(value, self.root,self.key)
 
 
-    def get_node_recurse(self, value: K,node: BSTNode[T]) -> BSTNode[T]:    
+    def get_node_recurse(self, value: K,node: BSTNode[T],key: Callable[[T], K]) -> BSTNode[T]:    
         try:
-            value == node.value
+            value == key(node.value)
         except:
             raise MissingValueError()
-        if value == node.value:
+        if value == key(node.value):
             return node
-        elif value < node.value:
-            return self.get_node_recurse(value, node.left)
+        elif value < key(node.value):
+            return self.get_node_recurse(value, node.left,key)
         else:
-            return self.get_node_recurse(value, node.right)
+            return self.get_node_recurse(value, node.right,key)
         
 
     def get_max_node(self) -> BSTNode[T]:
@@ -152,6 +186,9 @@ class BST(Generic[T, K]):
 #                successor = bst_max(node_to_remove.left)
 #                bst_remove(successor.value, successor.parent)
 #                node_to_remove.parent.replace_child(node_to_remove, successor)
+
+
+    def remove_value(self, value: K) -> None:
         """
         Remove the node with the specified value.
         When removing a node with 2 children take the successor for that node
@@ -161,7 +198,96 @@ class BST(Generic[T, K]):
         :return:
         :raises MissingValueError if the node does not exist
         """
-    
+        self.remove_value_helper(value,self.key)
+        return
+
+
+    def remove_value_helper(self, value: K, key: Callable[[T], K]) -> None:
+        if self.root is None:
+            raise EmptyTreeError()
+        elif key(self.root.value) == value:     # matches parent
+            self.bst_length -= 1
+            return
+        parent = None
+        node = self.root
+        # find node to remove
+        while node and key(node.value) != value:
+            parent = node
+            if value < key(node.value):
+                node = node.left
+            elif value > key(node.value):
+                node = node.right
+
+        # if not found has error
+        if node is None or key(node.value) != value:
+            raise MissingValueError()
+        
+        # easy case, no children
+        elif node.left is None and node.right is None:
+            self.bst_length -= 1
+            if value < key(parent.value):
+                parent.left = None
+            else:
+                parent.right = None
+            return
+
+        # left node only
+        elif node.left and node.right is None:
+            self.bst_length -= 1
+            if value < key(parent.value):
+                parent.left = node.left
+            else:
+                parent.right = node.left
+            return
+
+        # right node only
+        elif node.left is None and node.right:
+            self.bst_length -= 1
+            if value < key(parent.value):
+                parent.left = node.right
+            else:
+                parent.right = node.right
+            return
+
+        # both children exist
+        else:
+            self.bst_length -= 1
+            delNodeParent = node
+            delNode = node.right
+            while delNode.left:
+                delNodeParent = delNode
+                delNode = delNode.left
+		
+            node.value = delNode.value
+            if delNode.right:
+                if key(delNodeParent.value) > key(delNode.value):
+                    delNodeParent.left = delNode.right
+                elif key(delNodeParent.value) < key(delNode.value):
+                    delNodeParent.right = delNode.right
+            else:
+                if key(delNode.value) < key(delNodeParent.value):
+                    delNodeParent.left = None
+                else:
+                    delNodeParent.right = None
+
+#########################  end remove #######################
+
+    def inorder(self,results: List[BSTNode[T]]) -> None:
+        if self.root is None:
+            raise EmptyTreeError()
+        else:
+            return self.inorder_recurse(self.root, results)
+
+    def inorder_recurse(self, node: BSTNode[T], results: List[BSTNode[T]]) -> BSTNode[T]:
+        if node.left:
+            self.inorder_recurse(node.left,results)
+        #print (node.value)
+        results.append(node)
+        if node.right:
+            self.inorder_recurse(node.right, results)
+       
+
+ 
 
     def __eq__(self, other: object) -> bool:
         if self is other:
